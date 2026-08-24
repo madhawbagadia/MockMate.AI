@@ -43,7 +43,6 @@ function Step1SetUp({ onStart }) {
       setResumeText(response.data.resumeText || "");
 
       setAnalysisDone(true);
-      setAnalyzing(false);
     } catch (error) {
       console.error(
         "Resume upload error:",
@@ -178,8 +177,6 @@ function Step1SetUp({ onStart }) {
               className="w-full py-3 px-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition"
             >
               <option value="Technical">Technical Interview</option>
-              <option value="Coding">Coding / Algorithmic Interview</option>
-              <option value="Behavioral">Behavioral (STAR Method) Interview</option>
               <option value="HR">HR Interview</option>
             </select>
             {!analysisDone && (
