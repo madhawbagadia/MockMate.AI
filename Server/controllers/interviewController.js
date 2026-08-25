@@ -376,10 +376,7 @@ export const getInterviewReport = async (req, res) => {
     });
     const finalScore = totalQuestion ? totalScore / totalQuestion : 0;
     const avgConfidence = totalQuestion ? totalConfidence / totalQuestion : 0;
-    const avgCommunication = totalQuestion
-      ? totalCommunication / totalQuestion
-      : 0;
-
+    const avgCommunication = totalQuestion ? totalCommunication / totalQuestion : 0;
     const avgCorrectness = totalQuestion ? totalCorrectness / totalQuestion : 0;
 
     return res.json({
