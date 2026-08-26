@@ -18,7 +18,7 @@ import paymentRouter from './routes/paymentRoute.js';
 const app = express();
 
 app.use(cors({
-    origin:"http://localhost",
+    origin:"https://mockmate-client-ouu2.onrender.com",
     credentials:true
 }))
 
