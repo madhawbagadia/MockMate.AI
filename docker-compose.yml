@@ -1,0 +1,38 @@
+services:
+  server:
+    build: ./Server
+    expose:
+      - "8000"
+    env_file:
+      - ./Server/.env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  client:
+    build:
+      context: ./Client
+      args:
+        VITE_FIREBASE_APIKEY: ${VITE_FIREBASE_APIKEY}
+        VITE_RAZORPAY_KEY_ID: ${VITE_RAZORPAY_KEY_ID}
+    container_name: mockmate-client
+    expose:
+      - "80"
+    restart: unless-stopped
+    depends_on:
+      - server
+
+  nginx:
+    image: nginx:alpine
+    container_name: mockmate-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    restart: unless-stopped
+    depends_on:
+      - client
+      - server
