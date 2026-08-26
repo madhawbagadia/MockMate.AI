@@ -3,6 +3,9 @@ import redisClient from "../config/redis.js";
 
 const isAuth = async (req, res, next) => {
   try {
+    console.log("AUTH COOKIE:", req.headers.cookie);
+    console.log("PARSED COOKIES:", req.cookies);
+
     const { token } = req.cookies;
 
     if (!token) {
