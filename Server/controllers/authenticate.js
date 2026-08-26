@@ -16,11 +16,10 @@ export const googleAuth = async (req,res) => {
     }
 
     let token = await genToken(user._id);
-    // const isProduction = process.env.NODE_ENV === "production";
     res.cookie("token", token, {
-    //   httpOnly: true,
-    //   secure: isProduction,
-    //   sameSite: isProduction ? "none" : "lax",
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     return res.status(200).json(user);
@@ -33,7 +32,7 @@ export const googleAuth = async (req,res) => {
 
 export const logOut = async (req, res) => {
   try {
-    // const isProduction = process.env.NODE_ENV === "production";
+
     const { token } = req.cookies;
 
     if (!token) {
@@ -46,9 +45,9 @@ export const logOut = async (req, res) => {
     await redisClient.expireAt(`token:${token}`,payload.exp);
 
     res.clearCookie("token", {
-      // httpOnly: true,
-      // secure: isProduction,
-      // sameSite: isProduction ? "none" : "lax",
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
     });
 
     return res.status(200).json({

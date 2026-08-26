@@ -1,6 +1,6 @@
 import fs from "fs"
 import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
-import { askAI } from "../services/openRouter.js";
+import askAI from "../services/openRouter.js"
 import User from "../models/user.js";
 import Interview from "../models/interviewModel.js";
 
@@ -50,7 +50,19 @@ export const analyzeResume = async(req,res)=>{
         ];
 
         const aiResponse = await askAI(messages);
-        const parsed = JSON.parse(aiResponse);   // String ko JavaScript object mein convert karna
+
+        if (!aiResponse || !aiResponse.trim()) {
+          return res.status(500).json({
+            message: "AI returned empty response.",
+          });
+        }
+
+        const cleanResponse = aiResponse
+          .replace(/```json/g, "")
+          .replace(/```/g, "")
+          .trim();
+
+        const parsed = JSON.parse(cleanResponse);   // String ko JavaScript object mein convert karna
 
         fs.unlinkSync(filepath);
 
@@ -152,7 +164,8 @@ export const generateQuestion = async (req, res) => {
       },
     ];
 
-    const aiResponse = await askAi(messages);
+    const aiResponse = await askAI(messages);
+    // console.log("AI RESPONSE:", aiResponse);
 
     if (!aiResponse || !aiResponse.trim()) {
       return res.status(500).json({message: "AI returned empty response."});
@@ -191,8 +204,12 @@ export const generateQuestion = async (req, res) => {
       questions: interview.questions,
     });
   } catch (error) {
-    return res.status(500).json({ message: error });
-  }
+  console.error("GENERATE QUESTION ERROR:", error);
+
+  return res.status(500).json({
+    message: error.message,
+  });
+}
 };
 
 export const submitAnswer = async (req, res) => {
@@ -268,9 +285,21 @@ export const submitAnswer = async (req, res) => {
             Answer: ${answer} `,
       },
     ];
-    const aiResponse = await askAi(messages);
+    const aiResponse = await askAI(messages);
 
-    const parsed = JSON.parse(aiResponse);
+    if (!aiResponse || !aiResponse.trim()) {
+      return res.status(500).json({
+        message: "AI returned empty response.",
+      });
+    }
+
+    const cleanResponse = aiResponse
+      .replace(/```json/g, "")
+      .replace(/```/g, "")
+      .trim();
+
+    const parsed = JSON.parse(cleanResponse);
+
     question.answer = answer;
     question.feedback = parsed.feedback;
     question.score = parsed.finalScore;

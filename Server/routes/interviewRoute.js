@@ -11,7 +11,7 @@ interviewRouter.post("/generate-question", isAuth, generateQuestion);
 interviewRouter.post("/submit-answer", isAuth, submitAnswer);
 interviewRouter.post("/finish-interview", isAuth, finishInterview);
 
-interviewRouter.get("/get-interview", isAuth, getMyInterviews);
+interviewRouter.get("/get-interviews", isAuth, getMyInterviews);
 interviewRouter.get("/report/:id", isAuth, getInterviewReport);
 
 export default interviewRouter;

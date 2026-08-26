@@ -3,7 +3,6 @@ import { FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { ResponsiveContainer } from "recharts";
 import { motion } from "framer-motion";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -167,10 +166,10 @@ function Step3Report({ report }) {
       },
 
       columnStyles: {
-        0: { cellWidth: 10, halign: "center" },
-        1: { cellWidth: 55 },
-        2: { cellWidth: 20, halign: "center" },
-        3: { cellWidth: "auto" },
+        0: { cellWidth: 10, halign: "center" },  // index
+        1: { cellWidth: 55 },  // question
+        2: { cellWidth: 20, halign: "center" },  // score
+        3: { cellWidth: "auto" },  // feedback
       },
 
       alternateRowStyles: {

@@ -39,6 +39,7 @@ const Step2Interview = ({ interviewData, onFinish }) => {
   const [selectedVoice, setSelectedVoice] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [voiceGender, setVoiceGender] = useState("female");
+  const [subtitle, setSubtitle] = useState("");
   const [isCamOn, setIsCamOn] = useState(false);
   const [isCodeMode, setIsCodeMode] = useState(false);
   const [codeLanguage, setCodeLanguage] = useState("javascript");
@@ -51,20 +52,29 @@ const Step2Interview = ({ interviewData, onFinish }) => {
         mediaStreamRef.current.getTracks().forEach((t) => t.stop());
         mediaStreamRef.current = null;
       }
+
       setIsCamOn(false);
     } else {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: false,
+        });
+
         mediaStreamRef.current = stream;
-        if (userVideoRef.current) {
-          userVideoRef.current.srcObject = stream;
-        }
         setIsCamOn(true);
       } catch (err) {
+        console.error(err);
         alert("Camera permission denied or camera not available.");
       }
     }
   };
+
+  useEffect(() => {
+    if (isCamOn && userVideoRef.current && mediaStreamRef.current) {
+      userVideoRef.current.srcObject = mediaStreamRef.current;
+    }
+  }, [isCamOn]);
 
   const videoRef = useRef(null);
   const currentQuestion = questions[currentIndex];
@@ -352,22 +362,37 @@ const Step2Interview = ({ interviewData, onFinish }) => {
   return (
     <div className="min-h-screen bg-linear-to-br from-emerald-50 via-white to-teal-100 flex items-center justify-center p-4 sm:p-6">
       <div className="w-full max-w-350 min-h-[80vh] bg-white rounded-3xl shadow-2xl border border-gray-200 flex flex-col lg:flex-row overflow-hidden">
+        
         {/* video section */}
         <div className="w-full lg:w-[35%] bg-white flex flex-col items-center p-6 space-y-6 border-r border-gray-200">
-          <div className="w-full max-w-md rounded-2xl overflow-hidden shadow-xl relative bg-black">
-            <video
-              src={videoSource}
-              key={videoSource}
-              ref={videoRef}
-              autoPlay
-              muted
-              playsInline
-              preload="auto"
-              className="w-full h-auto object-cover"
-            />
-            <span className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md text-white text-xs px-3 py-1 rounded-full font-medium">
-              🤖 AI Interviewer
-            </span>
+          <div className="w-full max-w-md">
+
+            <div className="w-full rounded-2xl overflow-hidden shadow-xl relative bg-black">
+              <video
+                src={videoSource}
+                key={videoSource}
+                ref={videoRef}
+                autoPlay
+                muted
+                playsInline
+                preload="auto"
+                className="w-full h-auto object-cover"
+              />
+
+              <span className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md text-white text-xs px-3 py-1 rounded-full font-medium">
+                🤖 AI Interviewer
+              </span>
+            </div>
+
+            {/* Subtitle */}
+            {subtitle && (
+              <div className="mt-2 w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 shadow-sm">
+                <p className="text-gray-700 text-sm sm:text-base font-medium text-center leading-relaxed">
+                  {subtitle}
+                </p>
+              </div>
+            )}
+
           </div>
 
           {/* Candidate Webcam Feed */}
@@ -386,14 +411,6 @@ const Step2Interview = ({ interviewData, onFinish }) => {
             </div>
           )}
 
-          {/* subtitle */}
-          {subtitle && (
-            <div className="w-full max-w-md bg-gray-50 border border-gray-200 rounded-xl p-4 shadow-sm">
-              <p className="text-gray-700 text-sm sm:text-base font-medium text-center leading-relaxed">
-                {subtitle}
-              </p>
-            </div>
-          )}
 
           {/* timer Area */}
           <div className="w-full max-w-md bg-white border border-gray-200 rounded-2xl shadow-md p-6 space-y-5">
